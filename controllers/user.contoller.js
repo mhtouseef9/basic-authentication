@@ -1,3 +1,16 @@
+const User = require('../models/user')
+
+
+exports.createUser = (req, res) => {
+    User.create(req.body)
+        .then(user =>
+            res.send(user)
+        )
+}
+
 exports.getUsers = (req, res) => {
-    res.send([])
+    User.find()
+        .then(users =>
+            res.send(users)
+        )
 }
