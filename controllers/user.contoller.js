@@ -1,7 +1,8 @@
 const User = require('../models/user')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-
+ //Node.js natively does not load .env files, so we must utilize the dotenv package to load the file and expose the values via process.env.
+require('dotenv').config();
 
 exports.createUser = async (req, res) => {
     // pattern matching
@@ -41,8 +42,7 @@ generatejwt = (user) => {
     const {email} = user;
     const token = jwt.sign(
         { user_id: user._id, email },
-        "test string",
-        // process.env.TOKEN_KEY,
+        process.env.JWT_SECRET_KEY,
         {
             expiresIn: "2h",
         }
