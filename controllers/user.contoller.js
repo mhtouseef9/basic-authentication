@@ -16,14 +16,18 @@ exports.createUser = async (req, res) => {
     req.body.passwordHash = passwordHash
     User.create(req.body)
         .then(user =>
-            res.send(generatejwt(user))
-        )
+        {
+            let token = generatejwt(user)
+            res.status(200).send(userLoginObject(user, token));
+        })
 }
- exports.login = async (req, res) => {
+
+exports.login = async (req, res) => {
      const { email, password } = req.body;
      const user = await  User.findOne({email});
      if (user && await bcrypt.compare(password, user.passwordHash)) {
-         res.status(200).send(generatejwt(user));
+         let token = generatejwt(user)
+         res.status(200).send(userLoginObject(user, token));
      }
      else
      {
@@ -40,14 +44,20 @@ exports.getUsers = (req, res) => {
 
 generatejwt = (user) => {
     const {email} = user;
-    const token = jwt.sign(
+    return jwt.sign(
         { user_id: user._id, email },
-        process.env.JWT_SECRET_KEY,
-        {
-            expiresIn: "2h",
-        }
+        process.env.JWT_SECRET_KEY
+        // {
+        //     expiresIn: "2h",
+        // }
     );
-    user.token = token;
-    console.log(user);
-    return user;
+}
+
+userLoginObject = (user, token) => {
+    return  {
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        token: token
+    };
 }
