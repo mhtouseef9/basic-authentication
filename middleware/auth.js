@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken')
 require('dotenv').config();
 
 const verifyToken = (req, res, next) => {
+    console.log("in auth middleware------")
     let auth = req.headers.authorization;
     let token = auth && auth.split(' ')[1]
     if (!token) {
