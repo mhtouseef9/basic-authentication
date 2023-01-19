@@ -8,7 +8,7 @@ exports.createUser = async (req, res) => {
      const { first_name, last_name, email, password } = req.body;
      const oldUser = await User.findOne({ email });
      if (oldUser) {
-         return res.status(409).send(generatejwt(oldUser));
+         return res.status(409).send("User Already Exist. Please Login");
      }
 
      var passwordHash = await bcrypt.hash(req.body.password, 10);
@@ -22,7 +22,7 @@ exports.createUser = async (req, res) => {
      const { email, password } = req.body;
      const user = await  User.findOne({email});
      if (user && await bcrypt.compare(password, user.passwordHash)) {
-         res.status(200).send("successfully logged in");
+         res.status(200).send(generatejwt(user));
      }
      else
      {
