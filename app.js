@@ -6,9 +6,11 @@ app.use(express.json());
 
 app.use(express.urlencoded({ extended: false }));
 
-const a = require("./routes/user.routes");
+const users = require("./routes/user.routes");
+const posts = require("./routes/post.routes");
 
-app.use("/api/users", a);
+app.use("/api/users", users);
+app.use("/api/posts", posts);
 
 app.listen(3000, () => console.log('Server started'));
 

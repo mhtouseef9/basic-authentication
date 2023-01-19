@@ -13,12 +13,12 @@ exports.createUser = async (req, res) => {
      }
 
      var passwordHash = await bcrypt.hash(req.body.password, 10);
-    req.body.passwordHash = passwordHash
+     req.body.passwordHash = passwordHash;
     User.create(req.body)
         .then(user =>
         {
-            let token = generatejwt(user)
-            res.status(200).send(userLoginObject(user, token));
+            let token = generateJwt(user)
+            res.status(200).send(userView(user, token));
         })
 }
 
@@ -26,8 +26,9 @@ exports.login = async (req, res) => {
      const { email, password } = req.body;
      const user = await  User.findOne({email});
      if (user && await bcrypt.compare(password, user.passwordHash)) {
-         let token = generatejwt(user)
-         res.status(200).send(userLoginObject(user, token));
+         console.log("kk")
+         let token = generateJwt(user)
+         res.status(200).send(userView(user, token));
      }
      else
      {
@@ -42,10 +43,10 @@ exports.getUsers = (req, res) => {
         )
 }
 
-generatejwt = (user) => {
-    const {email} = user;
+generateJwt = (user) => {
+    console.log(user);
     return jwt.sign(
-        { user_id: user._id, email },
+        { user: user },
         process.env.JWT_SECRET_KEY
         // {
         //     expiresIn: "2h",
@@ -53,7 +54,7 @@ generatejwt = (user) => {
     );
 }
 
-userLoginObject = (user, token) => {
+userView = (user, token) => {
     return  {
         email: user.email,
         firstName: user.firstName,
