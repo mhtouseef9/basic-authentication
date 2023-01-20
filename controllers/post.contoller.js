@@ -1,12 +1,18 @@
 const Post = require('../models/post')
-const jwt = require('jsonwebtoken')
- //Node.js natively does not load .env files, so we must utilize the dotenv package to load the file and expose the values via process.env.
-require('dotenv').config();
+const multer = require('multer')
 
 exports.createPost = async (req, res) => {
     let userId = req.user && req.user._id;
     req.body.userId = userId;
-        Post.create(req.body)
+    let images = req.files;
+    console.log(images);
+    let imageUrls = uploadImage(images)
+    req.body.imageURLs = imageUrls
+    // console.log("req.body")
+    // console.log(req.body)
+    // console.log("imageURLs: " + imageUrls)
+
+    Post.create(req.body)
             .then(post =>
             {
                 res.status(200).send(post);
@@ -20,4 +26,10 @@ exports.getPostsByUser = (req, res) => {
         .then(posts =>
             res.send(posts)
         )
+}
+
+function uploadImage(images) {
+    // create proper accessible
+    console.log("uploaded file: " + images)
+    return images;
 }
