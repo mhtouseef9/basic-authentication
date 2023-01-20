@@ -1,17 +1,10 @@
 const Post = require('../models/post')
-const multer = require('multer')
 
 exports.createPost = async (req, res) => {
     let userId = req.user && req.user._id;
     req.body.userId = userId;
-    let images = req.files;
-    console.log(images);
-    let imageUrls = uploadImage(images)
+    let imageUrls = uploadImage(req.files)
     req.body.imageURLs = imageUrls
-    // console.log("req.body")
-    // console.log(req.body)
-    // console.log("imageURLs: " + imageUrls)
-
     Post.create(req.body)
             .then(post =>
             {
@@ -20,16 +13,41 @@ exports.createPost = async (req, res) => {
 }
 
 exports.getPostsByUser = (req, res) => {
-    const { user_id } = req;
-    Post.find({ user_id })
+    const { _id: userId } = req.user;
+    Post.find({ userId })
         .sort({createdAt: "desc"})
         .then(posts =>
+            // res.send(addImageHost(req, posts))
             res.send(posts)
-        )
+        );
+}
+
+exports.deletePostsByUser = (req, res) => {
+    const { _id: userId } = req.user;
+    Post.deleteMany({ userId })
+        .then(posts =>
+            res.status(200)
+        );
 }
 
 function uploadImage(images) {
-    // create proper accessible
-    console.log("uploaded file: " + images)
-    return images;
+    return images.map((image) => {
+        return {original: image.path};
+    })
 }
+
+const addImageHost = (req, posts) => {
+    return posts.map((post) => {
+        let updatedURLs = post.imageURLs.map((path) => {
+            path.original = basePath(req.hostname) + path.original;
+            return path;
+        });
+        post.imageURLs = updatedURLs
+        return post;
+    })
+}
+
+const basePath = (host) => {
+    return "http://" + host + ":" + process.env.PORT + "/";
+}
+

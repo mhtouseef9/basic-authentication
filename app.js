@@ -6,7 +6,8 @@ app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/public', express.static("public"));
+// to access any file from this folder from URL like http://localhost:3000/uploads/abc.jpg
+app.use('/uploads', express.static("uploads"));
 
 const users = require("./routes/user.routes");
 const posts = require("./routes/post.routes");
@@ -14,7 +15,7 @@ const posts = require("./routes/post.routes");
 app.use("/api/users", users);
 app.use("/api/posts", posts);
 
-app.listen(3000, () => console.log('Server started'));
+app.listen(process.env.PORT, () => console.log('Server started'));
 
 
 // DB config
