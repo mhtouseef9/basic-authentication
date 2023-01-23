@@ -16,6 +16,7 @@ const verifyToken = (req, res, next) => {
     catch (error) {
         res.send(error)
     }
+    //next() is called to invoke next middleware if any otherwise controller fun. if next is not called req will be hanging here.
     return next();
 }
 module.exports = verifyToken;
