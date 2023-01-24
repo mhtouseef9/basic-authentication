@@ -3,8 +3,10 @@ const Post = require('../models/post')
 exports.createPost = async (req, res) => {
     let userId = req.user && req.user._id;
     req.body.userId = userId;
-    let imageUrls = uploadImage(req.files)
-    req.body.imageURLs = imageUrls
+    if (req.files) {
+        let images = uploadImage(req.files);
+        req.body.imageURLs = images;
+    }
     Post.create(req.body)
             .then(post =>
             {
