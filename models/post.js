@@ -3,7 +3,7 @@ var Post = new mongoose.Schema({
     content: String,
     userId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'userss',
+        ref: 'users',
         required:true
     },
     imageURLs: Array

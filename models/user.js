@@ -7,4 +7,4 @@ var User = new mongoose.Schema({
     isConfirmed: Boolean
 });
 module.exports = mongoose.model(
-    'users', User, 'userss');
+    'users', User, 'users');
