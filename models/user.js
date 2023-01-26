@@ -6,5 +6,4 @@ var User = new mongoose.Schema({
     passwordHash: {type: String},
     isConfirmed: Boolean
 });
-module.exports = mongoose.model(
-    'users', User, 'users');
+module.exports = mongoose.model('users', User);
