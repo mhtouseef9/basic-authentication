@@ -24,7 +24,6 @@ imageUpload(req, res, (err) => {
                 msg: err.message,
             });
         }
-        console.log()
         return res.status(500).json({
             success: 0,
             msg: "Only images allowed",

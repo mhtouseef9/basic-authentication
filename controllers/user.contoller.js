@@ -26,7 +26,6 @@ exports.login = async (req, res) => {
      const { email, password } = req.body;
      const user = await  User.findOne({email});
      if (user && await bcrypt.compare(password, user.passwordHash)) {
-         console.log("kk")
          let token = generateJwt(user)
          res.status(200).send(userView(user, token));
      }
@@ -44,7 +43,6 @@ exports.getUsers = (req, res) => {
 }
 
 generateJwt = (user) => {
-    console.log(user);
     return jwt.sign(
         { user: user },
         process.env.JWT_SECRET_KEY
