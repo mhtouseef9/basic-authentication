@@ -1,5 +1,6 @@
 const dbConfig = () => {
     let mongoose = require('mongoose');
+    mongoose.set('strictQuery', true);  // just to suppress a warning
     let url = 'mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000';
     //we can also specify DB name in URL like "mongodb://127.0.0.1:27017/authDev".
     mongoose.connect(url, {dbName: "authDev"});
