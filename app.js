@@ -30,22 +30,19 @@ config;
 // import {makeExecutableSchema} from 'graphql-tools';
 var express_graphql = require('express-graphql').graphqlHTTP;
 var { buildSchema } = require('graphql');
+const { makeExecutableSchema } = require("@graphql-tools/schema");
+
 const User = require("./models/user");
 const userController = require("./controllers/user.contoller");
 const bcrypt = require("bcrypt");
 
 // All GraphQL schemas and types of each context or module
-var schema = buildSchema(`
+var typeDefs = buildSchema(`
     type Query {
         listUsers: [userType]
     },
     type Mutation {
-        createUser(
-        email: String
-        firstName: String
-        lastName: String
-        password: String
-        ): userType
+        createUser(input: userInputType): userType
     }
     type userType {
         _id: ID
@@ -54,8 +51,8 @@ var schema = buildSchema(`
         lastName: String
         token: String
     }
-    type userInputType {
-        email: String
+    input userInputType {
+        email: String!
         firstName: String
         lastName: String
         password: String
@@ -67,29 +64,35 @@ var listUsers = async function(args) {
     let users = await User.find();
     return users;
 }
-var createUser = async function(args) {
+var createUser = async function(_, { input }) {
     // pattern matching
-    const { first_name, last_name, email, password } = args;
+    const { first_name, last_name, email, password } = input;
     const oldUser = await User.findOne({ email });
     if (oldUser) {
         return {firstName: "User Already Exist. Please Login"};
     }
-    var passwordHash = await bcrypt.hash(args.password, 10);
-    args.passwordHash = passwordHash;
-    let user = await User.create(args)
+    var passwordHash = await bcrypt.hash(input.password, 10);
+    input.passwordHash = passwordHash;
+    let user = await User.create(input)
     let token = userController.generateJwt(user)
     return userController.userView(user, token);
 }
 // combining resolver functions and their relevant field of request.
-var root = {
-    listUsers: listUsers,
-    createUser: createUser
+var resolvers = {
+    Query: {
+        listUsers: listUsers
+    },
+    Mutation:{
+        createUser: createUser
+    }
 };
+
+const schema = makeExecutableSchema({ typeDefs, resolvers });
 
 // main route which will accept all graphql routes and forwards to relevant schema
 app.use('/graphql', express_graphql({
     schema: schema,
-    rootValue: root,
+    // rootValue: root,
     graphiql: true
 }));
 
