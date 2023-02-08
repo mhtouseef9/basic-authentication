@@ -24,7 +24,7 @@ app.listen(process.env.PORT, () => console.log('Server started'));
 // importing all config
 config;
 
-// just for graphhql
+// just for graphql
 
 // import graphqlHTTP from 'express-graphql';
 // import {makeExecutableSchema} from 'graphql-tools';
