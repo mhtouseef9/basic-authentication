@@ -35,14 +35,12 @@ exports.login = async (req, res) => {
      }
 }
 
-exports.getUsers = (req, res) => {
-    User.find()
-        .then(users =>
-            res.send(users)
-        )
+exports.getUsers = async (req, res) => {
+    let users = await User.find();
+    res.send(users);
 }
 
-generateJwt = (user) => {
+exports.generateJwt = (user) => {
     return jwt.sign(
         { user: user },
         process.env.JWT_SECRET_KEY
@@ -52,8 +50,9 @@ generateJwt = (user) => {
     );
 }
 
-userView = (user, token) => {
+exports.userView = (user, token) => {
     return  {
+        _id: user._id,
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
